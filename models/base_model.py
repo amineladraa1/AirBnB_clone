@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """Defines BaseModel class."""
+import models
 from uuid import uuid4
 from datetime import datetime
 
@@ -22,6 +23,8 @@ class BaseModel:
                     self.__dict__[key] = datetime.strptime(val, time_form)
                 else:
                     self.__dict__[key] = val
+        else:
+            models.storage.new(self)
 
     def save(self):
         """updates the public instance attribute updated_at"""
