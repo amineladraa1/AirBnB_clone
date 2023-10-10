@@ -16,9 +16,11 @@ class BaseModel:
         self.id = str(uuid4())
         self.created_at = datetime.today()
         self.updated_at = datetime.today()
-        time_form = "%Y-%m-%dT%H:%M:%S.%f"
-        if len(kwargs) != 0:
+        if kwargs: # changed from len(kwargs) != 0 to kwargs
+            time_form = "%Y-%m-%dT%H:%M:%S.%f" # moved inside if block
             for key, val in kwargs.items():
+                if key == "__class__": # Added check for key "__class__"
+                    continue
                 if key == "created_at" or key == "updated_at":
                     self.__dict__[key] = datetime.strptime(val, time_form)
                 else:
@@ -29,6 +31,7 @@ class BaseModel:
     def save(self):
         """updates the public instance attribute updated_at"""
         self.updated_at = datetime.today()
+        models.storage.save() # Added save method
 
     def to_dict(self):
         """returns dictionary containing keys/values of __dict__"""

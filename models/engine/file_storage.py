@@ -15,7 +15,7 @@ class FileStorage:
 
     def all(self):
         """Return the dictionary __objects."""
-        return FileStorage.objects
+        return FileStorage.__objects # added double underscore
 
     def new(self, obj):
         """sets in __objects the obj with key <obj class name>.id"""
@@ -26,18 +26,19 @@ class FileStorage:
         """serializes __objects to the JSON file (path: __file_path)"""
         o_dict = FileStorage.__objects
         obj_dict = {obj: o_dict[obj].to_dict() for obj in o_dict.keys()}
-        with open(FileStorage.__file_path, "w") as fi:
+        with open(FileStorage.__file_path, "w", encoding="UTF-8") as fi:
+            # Added encoding
             json.dump(obj_dict, fi)
 
     def reload(self):
         """Deserialize the JSON file __file_path to __objects, if it exists."""
         try:
-            with open(FileStorage.__file_path) as f:
+            with open(FileStorage.__file_path, encoding="UTF-8") as f:
+                # Added encoding
                 objdict = json.load(f)
                 for obj in objdict.values():
-                    cls_name = obj["__class__"]
-                    del obj["__class__"]
-                    self.new(eval(cls_name)(**obj))
+                    # Removed unnecessary code
+                    self.new(eval(obj["__class__"])(**obj))
         except FileNotFoundError:
             return
 
