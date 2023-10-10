@@ -5,14 +5,23 @@ from datetime import datetime
 
 class BaseModel:
     """Represents the BaseModel of the HBnB project."""
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Initialize a new BaseModel.
 
         Args:
+            args (any): Unused.
+            **kwargs (dict): Key/value pairs of attributes.
         """
         self.id = str(uuid4())
         self.created_at = datetime.today()
         self.updated_at = datetime.today()
+        time_form = "%Y-%m-%dT%H:%M:%S.%f"
+        if len(kwargs) != 0:
+            for key, val in kwargs.items():
+                if key == "created_at" or key == "updated_at":
+                    self.__dict__[key] = datetime.strptime(val, time_form)
+                else:
+                    self.__dict__[key] = val
 
     def save(self):
         """updates the public instance attribute updated_at"""
