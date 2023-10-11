@@ -12,11 +12,13 @@ from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
 
+
 class HBNBCommand(cmd.Cmd):
     """HBNBCommand class body"""
     prompt = "(hbnb) "
     classes = ["BaseModel", "FileStorage", "User", "State",
                "City", "Place", "Amenity", "Review"]
+
     def do_quit(self, line):
         """Quit command to exit the program"""
         return True
@@ -80,7 +82,7 @@ class HBNBCommand(cmd.Cmd):
         if tokens[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        
+
         if len(tokens) < 2:
             print("** instance id missing **")
             return
