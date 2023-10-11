@@ -15,7 +15,8 @@ from models.review import Review
 class HBNBCommand(cmd.Cmd):
     """HBNBCommand class body"""
     prompt = "(hbnb) "
-
+    classes = ["BaseModel", "FileStorage", "User", "State",
+               "City", "Place", "Amenity", "Review"]
     def do_quit(self, line):
         """Quit command to exit the program"""
         return True
@@ -32,74 +33,108 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, line):
         """Creates an instance of a class and
         stores it in a file in JSON format"""
-        if line:
-            if line == "BaseModel":
-                new_instance = eval(line)()
-                print(new_instance.id)
-                storage.new(new_instance)
-                storage.save()
-            else:
-                print("** class doesn't exist **")
-        else:
+        if not line:
             print("** class name missing **")
+            return
+        if line not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+        new_instance = eval(line)()
+        print(new_instance.id)
+        storage.save()
 
     def do_show(self, line):
         """Prints the string representation of an instance
         based on the class name and id"""
+        if not line:
+            print("** class name missing **")
+            return
+
         tokens = line.split()
-        if len(tokens) == 2:
-            cls_name, o_id = tokens
-            if cls_name == "BaseModel":
-                storage.reload()
-                objects = storage.all()
-                for key, value in objects.items():
-                    if key[len(cls_name) + 1:] == o_id:
-                        print(value)
-                        return
-                print("** no instance found **")
-            else:
-                print("** class doesn't exist **")
-        else:
-            err_msg = "** instance id missing **" if len(tokens) == 1\
-                      else "** class name missing **"
-            print(err_msg)
+
+        if tokens[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+
+        if len(tokens) < 2:
+            print("** instance id missing **")
+            return
+
+        key_val = f"{tokens[0]}.{tokens[1]}"
+
+        if key_val not in storage.all().keys():
+            print("** no instance found **")
+            return
+
+        print(storage.all()[key_val])
 
     def do_destroy(self, line):
         """Deletes an instance based on the class name and id
         and saves the change into the JSON file"""
+        if not line:
+            print("** class name missing **")
+            return
+
         tokens = line.split()
-        if len(tokens) == 2:
-            cls_name, o_id = tokens
-            if cls_name == "BaseModel":
-                storage.reload()
-                objects = storage.all()
-                for key in objects.keys():
-                    if key[len(cls_name) + 1:] == o_id:
-                        del objects[key]
-                        storage.save()
-                        return
-                print("** no instance found **")
-            else:
-                print("** class doesn't exist **")
-        else:
-            err_msg = "** instance id missing **" if len(tokens) == 1\
-                      else "** class name missing **"
-            print(err_msg)
+
+        if tokens[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+        
+        if len(tokens) < 2:
+            print("** instance id missing **")
+            return
+
+        key_val = f"{tokens[0]}.{tokens[1]}"
+
+        if key_val not in storage.all().keys():
+            print("** no instance found **")
+            return
+
+        del storage.all()[key_val]
+        storage.save()
 
     def do_all(self, line):
         """Prints the string representation of all instances
         of a specified class"""
-        if line:
-            if line == "BaseModel":
-                str_objs = []
-                storage.reload()
-                objects = storage.all()
-                for key in objects.keys():
-                    if key[:len(line)] == line:
-                        str_objs.append(str(objects[key]))
-                print(str_objs)
-            else:
+        if not line:
+            print([str(obj) for obj in storage.all().values()])
+            return
+
+        tokens = line.split()
+
+        if tokens[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+
+        print([str(val) for key, val in storage.all().items()
+               if key[:len(tokens[0])] == tokens[0]])
+
+    def do_update(self, line):
+        """Updates the attributes of a given instance of a class"""
+
+        tokens = line.split()
+
+        err_msg = ["** class name missing **", "** instance id missing **",
+                   "** attribute name missing **", "** value missing **"]
+        for i in range(4):
+
+            if len(tokens) == 1 and tokens[0] not in HBNBCommand.classes:
                 print("** class doesn't exist **")
+                return
+
+            if len(tokens) == i:
+                print(err_msg[i])
+                return
+
+        key_val = f"{tokens[0]}.{tokens[1]}"
+
+        if key_val not in storage.all().keys():
+            print("** no instance found **")
+            return
+
+        setattr(storage.all()[key_val], tokens[2], tokens[3][1:-1])
+        storage.save()
 
 
 if __name__ == '__main__':
