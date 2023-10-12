@@ -34,6 +34,9 @@ Once the command-line interpreter is started, you'll be presented with a prompt 
 ```
 (hbnb) update User <user_id> name "foo bar"
 ```
+## Authors:
+Amine Ladraa: email
+Yasmine Znatni: znatni.yasmine@gmail.com
 
 
 
