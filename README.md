@@ -1,4 +1,4 @@
-# AirBnB Clone
+# AirBnB Clone - The Console
 This repository contains the code for a basic version of the AirBnB clone. The main component is a command-line interpreter that allows users to manage different objects related to the platform. The system is designed to handle various entities that are essential for a platform like AirBnB, such as:
 + `BaseModel`: The base class for all other classes, containing common attributes and methods.
 + `FileStorage`: Handles the storage of all instances in a JSON format file.
@@ -35,8 +35,8 @@ Once the command-line interpreter is started, you'll be presented with a prompt 
 (hbnb) update User <user_id> name "foo bar"
 ```
 ## Authors:
-Amine Ladraa: email
-Yasmine Znatni: znatni.yasmine@gmail.com
++ Amine Ladraa: email
++ Yasmine Znatni: znatni.yasmine@gmail.com
 
 
 
