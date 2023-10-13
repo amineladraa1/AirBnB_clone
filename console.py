@@ -148,7 +148,8 @@ class HBNBCommand(cmd.Cmd):
                 return
         elif line.endswith(".count()"):
             if tokens[0] in HBNBCommand.classes:
-                print(sum(1 for key in storage.all().keys() if key.startswith(tokens[0])))
+                print(sum(1 for key in storage.all().keys()
+                          if key.startswith(tokens[0])))
                 return
         print(f"*** Unknown syntax: {line}")
 
