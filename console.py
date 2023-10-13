@@ -138,6 +138,21 @@ class HBNBCommand(cmd.Cmd):
         setattr(storage.all()[key_val], tokens[2], tokens[3][1:-1])
         storage.save()
 
+    def default(self, line):
+        """Triggered when the user inputs an unrecognized command"""
+        tokens = line.split(".")
+        if line.endswith(".all()"):
+            if tokens[0] in HBNBCommand.classes:
+                print([str(val) for key, val in storage.all().items()
+                       if key[:len(tokens[0])] == tokens[0]])
+            else:
+                print(f"*** Unknown syntax: {line}")
+        elif line.endswith(".count()"):
+            if tokens[0] in HBNBCommand.classes:
+                print(sum(1 for key in storage.all().keys() if key.startswith(tokens[0])))
+        else:
+            print(f"*** Unknown syntax: {line}")
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
