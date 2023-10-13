@@ -145,13 +145,12 @@ class HBNBCommand(cmd.Cmd):
             if tokens[0] in HBNBCommand.classes:
                 print([str(val) for key, val in storage.all().items()
                        if key[:len(tokens[0])] == tokens[0]])
-            else:
-                print(f"*** Unknown syntax: {line}")
+                return
         elif line.endswith(".count()"):
             if tokens[0] in HBNBCommand.classes:
                 print(sum(1 for key in storage.all().keys() if key.startswith(tokens[0])))
-        else:
-            print(f"*** Unknown syntax: {line}")
+                return
+        print(f"*** Unknown syntax: {line}")
 
 
 if __name__ == '__main__':
