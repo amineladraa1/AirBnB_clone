@@ -104,8 +104,8 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, line):
         """Prints the string representation of all instances
         of a specified class"""
-        if not line or line == "()":
-            print([str(obj) for obj in storage.all().values()])
+        if not line:
+            print([obj for obj in storage.all().values()])
             return
 
         tokens = line.split()
@@ -114,7 +114,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
-        print([str(val) for key, val in storage.all().items()
+        print([val for key, val in storage.all().items()
                if key[:len(tokens[0])] == tokens[0]])
 
     def do_update(self, line):
