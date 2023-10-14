@@ -39,10 +39,13 @@ class HBNBCommand(cmd.Cmd):
         if not line:
             print("** class name missing **")
             return
+
         tokens = line.split()
+
         if tokens[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+
         new_instance = eval(line)()
         print(new_instance.id)
         storage.save()
@@ -101,7 +104,7 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, line):
         """Prints the string representation of all instances
         of a specified class"""
-        if not line:
+        if not line or line == "()":
             print([str(obj) for obj in storage.all().values()])
             return
 
