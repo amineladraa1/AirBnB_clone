@@ -159,6 +159,12 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** class doesn't exist **")
             return
+        elif re.match(r'\w+\.\bshow\b\(.*\)', line):
+            cmd = tokens.pop()
+            tokens.extend(cmd.split("("))
+            tokens[2] = tokens[2][:-1]
+            HBNBCommand.do_show(self, f"{tokens[0]} {tokens[2]}")
+            return
         print(f"*** Unknown syntax: {line}")
 
 
