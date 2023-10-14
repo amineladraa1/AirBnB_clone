@@ -159,13 +159,22 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** class doesn't exist **")
             return
-        elif re.match(r'\w+\.\bshow\b\(.*\)', line):
-            cmd = tokens.pop()
-            tokens.extend(cmd.split("("))
-            tokens[2] = tokens[2][:-1]
-            HBNBCommand.do_show(self, f"{tokens[0]} {tokens[2]}")
+        elif re.match(r'\w+\.\w+\(.*\)', line):
+            tokens = HBNBCommand.args(tokens)
+            if "show" in line:
+                HBNBCommand.do_show(self, f"{tokens[0]} {tokens[2]}")
+            if "destroy" in line:
+                HBNBCommand.do_destroy(self, f"{tokens[0]} {tokens[2]}")
             return
         print(f"*** Unknown syntax: {line}")
+
+    @staticmethod
+    def args(tokens):
+        cmd = tokens.pop()
+        tokens.extend(cmd.split("("))
+        tokens[2] = tokens[2][:-1]
+        return tokens
+
 
 
 if __name__ == '__main__':
