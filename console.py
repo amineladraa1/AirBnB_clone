@@ -140,12 +140,14 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
             return
 
-        setattr(storage.all()[key_val], tokens[2], tokens[3][1:-1])
+        new_val = tokens[3]
+        new_val = new_val.strip("'\"") if new_val[0] in "\"'" else new_val
+        setattr(storage.all()[key_val], tokens[2], new_val)
         storage.save()
 
     def default(self, line):
         """Triggered when the user inputs an unrecognized command"""
-        tokens = line.split(".")
+        tokens = line.split(".", 1)
         if line.endswith("all()"):
             HBNBCommand.do_all(self, tokens[0])
             return
@@ -165,6 +167,10 @@ class HBNBCommand(cmd.Cmd):
                 HBNBCommand.do_show(self, f"{tokens[0]} {tokens[2]}")
             if "destroy" in line:
                 HBNBCommand.do_destroy(self, f"{tokens[0]} {tokens[2]}")
+            if "update" in line:
+                san_args = HBNBCommand.sanitized_args(tokens)
+                san_args.pop(1)
+                HBNBCommand.do_update(self, " ".join(san_args))
             return
         print(f"*** Unknown syntax: {line}")
 
@@ -174,6 +180,18 @@ class HBNBCommand(cmd.Cmd):
         tokens.extend(cmd.split("("))
         tokens[2] = tokens[2][:-1]
         return tokens
+
+    @staticmethod
+    def sanitized_args(tokens):
+        new_tokens = HBNBCommand.args(tokens)
+        new_args = new_tokens[:2] + new_tokens[2].split(",")
+        for i in range(2, len(new_args)):
+            arg = new_args[i]
+            arg = arg.strip(" \"'")
+            new_args[i] = arg
+        return new_args
+
+
 
 
 
