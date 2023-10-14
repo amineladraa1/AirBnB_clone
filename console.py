@@ -165,13 +165,16 @@ class HBNBCommand(cmd.Cmd):
             tokens = HBNBCommand.args(tokens)
             if "show" in line:
                 HBNBCommand.do_show(self, f"{tokens[0]} {tokens[2]}")
+                return
             if "destroy" in line:
                 HBNBCommand.do_destroy(self, f"{tokens[0]} {tokens[2]}")
+                return
             if "update" in line:
                 san_args = HBNBCommand.sanitized_args(tokens)
-                san_args.pop(1)
-                HBNBCommand.do_update(self, " ".join(san_args))
-            return
+                if san_args:
+                    san_args.pop(1)
+                    HBNBCommand.do_update(self, " ".join(san_args))
+                    return
         print(f"*** Unknown syntax: {line}")
 
     @staticmethod
@@ -186,11 +189,12 @@ class HBNBCommand(cmd.Cmd):
         #new_tokens = HBNBCommand.args(tokens)
         new_args = tokens[:2] + tokens[2].split(",")
         print(new_args)
-        if re.match(r" *\{.*\}", new_args[len(new_args) - 1]):
+        dict_args = ", ".join(new_args[3:]) if "{" in new_args[3] else ""
+        if re.match(r" *\{.*\}", dict_args):
             print("here")
             try:
-                dict_args = eval(new_args[len(new_args) - 1])
-                new_args.pop()
+                dict_args = eval(dict_args)
+                new_args = new_args[:3]
                 for key, value in dict_args.items():
                     new_args.extend([str(key), str(value)])
                     break
