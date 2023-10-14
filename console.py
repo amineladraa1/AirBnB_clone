@@ -183,11 +183,22 @@ class HBNBCommand(cmd.Cmd):
 
     @staticmethod
     def sanitized_args(tokens):
-        new_tokens = HBNBCommand.args(tokens)
-        new_args = new_tokens[:2] + new_tokens[2].split(",")
+        #new_tokens = HBNBCommand.args(tokens)
+        new_args = tokens[:2] + tokens[2].split(",")
+        print(new_args)
+        if re.match(r" *\{.*\}", new_args[len(new_args) - 1]):
+            print("here")
+            try:
+                dict_args = eval(new_args[len(new_args) - 1])
+                new_args.pop()
+                for key, value in dict_args.items():
+                    new_args.extend([str(key), str(value)])
+                    break
+            except Exception:
+                return None
         for i in range(2, len(new_args)):
             arg = new_args[i]
-            arg = arg.strip(" \"'")
+            arg = arg.strip(" \"'{}")
             new_args[i] = arg
         return new_args
 
