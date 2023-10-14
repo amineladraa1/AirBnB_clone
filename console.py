@@ -11,6 +11,7 @@ from models.city import City
 from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
+import re
 
 
 class HBNBCommand(cmd.Cmd):
@@ -141,21 +142,19 @@ class HBNBCommand(cmd.Cmd):
     def default(self, line):
         """Triggered when the user inputs an unrecognized command"""
         tokens = line.split(".")
-        if len(tokens) == 2:
-            if line.endswith(".all()"):
-                HBNBCommand.do_all(self, tokens[0])
+        if line.endswith("all()"):
+            HBNBCommand.do_all(self, tokens[0])
+            return
+        elif line.endswith("count()"):
+            if line.startswith("count()"):
+                print("** class name missing **")
                 return
-            elif line.endswith(".count()"):
-                if tokens[0] == "count()":
-                    print("** class name missing **")
-                    return
-                if tokens[0] in HBNBCommand.classes:
-                    print(sum(1 for key in storage.all().keys()
-                              if key.startswith(tokens[0])))
-                    return
-                else:
-                    print("** class doesn't exist **")
-                    return
+            if tokens[0] in HBNBCommand.classes:
+                print(sum(1 for key in storage.all().keys()
+                          if key.startswith(tokens[0])))
+            else:
+                print("** class doesn't exist **")
+            return
         print(f"*** Unknown syntax: {line}")
 
 
