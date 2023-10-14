@@ -39,7 +39,8 @@ class HBNBCommand(cmd.Cmd):
         if not line:
             print("** class name missing **")
             return
-        if line not in HBNBCommand.classes:
+        tokens = line.split()
+        if tokens[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
         new_instance = eval(line)()
