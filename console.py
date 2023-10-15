@@ -134,6 +134,8 @@ class HBNBCommand(cmd.Cmd):
                 print(err_msg[i])
                 return
 
+        for i in range(len(tokens)):
+            tokens[i] = tokens[i].strip(" ,\"'")
         key_val = f"{tokens[0]}.{tokens[1]}"
 
         if key_val not in storage.all().keys():
@@ -141,7 +143,6 @@ class HBNBCommand(cmd.Cmd):
             return
 
         new_val = tokens[3]
-        new_val = new_val.strip("'\"") if new_val[0] in "\"'" else new_val
         setattr(storage.all()[key_val], tokens[2], new_val)
         storage.save()
 
@@ -177,14 +178,10 @@ class HBNBCommand(cmd.Cmd):
                     while len(args) < 3:
                         args.append("")
                     tokens = tokens[:2] + args
-                    print("here")
                 else:
                     tokens = HBNBCommand.sanitized_args(tokens)
                 if tokens:
-                    for i in range(len(tokens)):
-                        tokens[i] = tokens[i].strip(" ,\"'")
                     tokens.pop(1)
-                    print(" ".join(tokens))
                     HBNBCommand.do_update(self, " ".join(tokens))
                     return
 
