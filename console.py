@@ -186,7 +186,6 @@ class HBNBCommand(cmd.Cmd):
 
     @staticmethod
     def sanitized_args(tokens):
-        #new_tokens = HBNBCommand.args(tokens)
         new_args = tokens[:2] + tokens[2].split(",")
         print(new_args)
         dict_args = ", ".join(new_args[3:]) if "{" in new_args[3] else ""
