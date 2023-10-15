@@ -180,10 +180,11 @@ class HBNBCommand(cmd.Cmd):
                     tokens.pop(1)
                 else:
                     tokens = HBNBCommand.sanitized_args(tokens)
-                for i in range(len(tokens)):
-                    tokens[i] = tokens[i].strip(" ,\"'")
-                HBNBCommand.do_update(self, " ".join(tokens))
-                return
+                if tokens:
+                    for i in range(len(tokens)):
+                        tokens[i] = tokens[i].strip(" ,\"'")
+                    HBNBCommand.do_update(self, " ".join(tokens))
+                    return
 
         print(f"*** Unknown syntax: {line}")
 
@@ -209,8 +210,7 @@ class HBNBCommand(cmd.Cmd):
             while len(new_args) < 5:
                 new_args.append("")
             new_args.pop(1)
-            return new_args
-
+            return None
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
