@@ -171,18 +171,20 @@ class HBNBCommand(cmd.Cmd):
                 return
             if "update" in line:
                 args = tokens[len(tokens) - 1].split(",", 1)
-                if "{" not in tokens[len(tokens) - 1]:
+                if not HBNBCommand.is_dict(tokens[len(tokens) - 1]):
                     if len(args) >= 2:
                         args = args[:1] + args[len(args) - 1].split(",")
                     while len(args) < 3:
                         args.append("")
                     tokens = tokens[:2] + args
-                    tokens.pop(1)
+                    print("here")
                 else:
                     tokens = HBNBCommand.sanitized_args(tokens)
                 if tokens:
                     for i in range(len(tokens)):
                         tokens[i] = tokens[i].strip(" ,\"'")
+                    tokens.pop(1)
+                    print(" ".join(tokens))
                     HBNBCommand.do_update(self, " ".join(tokens))
                     return
 
@@ -196,20 +198,24 @@ class HBNBCommand(cmd.Cmd):
         return tokens
 
     @staticmethod
+    def is_dict(string):
+        """Checks if a string is in the form for a dictionary"""
+        return "{" in string or "}" in string
+
+    @staticmethod
     def sanitized_args(tokens):
         new_args = tokens[:2] + tokens[2].split(",", 1)
         dict_args = new_args.pop()
         try:
+            eval(dict_args)
+            dict_args = dict_args.split(",")[0]
+            if "}" not in dict_args:
+                dict_args += "}"
             dict_args = eval(dict_args)
             for key, value in dict_args.items():
                 new_args.extend([str(key), str(value)])
-                break
-            new_args.pop(1)
             return new_args
         except (SyntaxError, ValueError):
-            while len(new_args) < 5:
-                new_args.append("")
-            new_args.pop(1)
             return None
 
 if __name__ == '__main__':
