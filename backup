@@ -1,8 +1,0 @@
-2         if re.match(r'\{.*\}?', new_args[len(new_args) - 1]):
- 11             dict_args = new_args[len(new_args) - 1].split(":")
- 10             if ":" in dict_args[0]:
-  9                 dict_args = dict_args[0].split(":")
-  8             dict_args[0] = dict_args[0].strip(" {}'\"")
-  7             dict_args[1] = dict_args[1].strip(" {}'\"")
-  6             new_args = new_args[:2] + dict_args
-

@@ -170,11 +170,21 @@ class HBNBCommand(cmd.Cmd):
                 HBNBCommand.do_destroy(self, f"{tokens[0]} {tokens[2]}")
                 return
             if "update" in line:
-                san_args = HBNBCommand.sanitized_args(tokens)
-                if san_args:
-                    san_args.pop(1)
-                    HBNBCommand.do_update(self, " ".join(san_args))
-                    return
+                args = tokens[len(tokens) - 1].split(",", 1)
+                if "{" not in tokens[len(tokens) - 1]:
+                    if len(args) >= 2:
+                        args = args[:1] + args[len(args) - 1].split(",")
+                    while len(args) < 3:
+                        args.append("")
+                    tokens = tokens[:2] + args
+                    tokens.pop(1)
+                else:
+                    tokens = HBNBCommand.sanitized_args(tokens)
+                for i in range(len(tokens)):
+                    tokens[i] = tokens[i].strip(" ,\"'")
+                HBNBCommand.do_update(self, " ".join(tokens))
+                return
+
         print(f"*** Unknown syntax: {line}")
 
     @staticmethod
@@ -186,22 +196,20 @@ class HBNBCommand(cmd.Cmd):
 
     @staticmethod
     def sanitized_args(tokens):
-        new_args = tokens[:2] + tokens[2].split(",")
-        dict_args = ", ".join(new_args[3:]) if "{" in new_args[3] else ""
-        if re.match(r" *\{.*\}", dict_args):
-            try:
-                dict_args = eval(dict_args)
-                new_args = new_args[:3]
-                for key, value in dict_args.items():
-                    new_args.extend([str(key), str(value)])
-                    break
-            except Exception:
-                return None
-        for i in range(2, len(new_args)):
-            arg = new_args[i]
-            arg = arg.strip(" \"'{}")
-            new_args[i] = arg
-        return new_args
+        new_args = tokens[:2] + tokens[2].split(",", 1)
+        dict_args = new_args.pop()
+        try:
+            dict_args = eval(dict_args)
+            for key, value in dict_args.items():
+                new_args.extend([str(key), str(value)])
+                break
+            new_args.pop(1)
+            return new_args
+        except (SyntaxError, ValueError):
+            while len(new_args) < 5:
+                new_args.append("")
+            new_args.pop(1)
+            return new_args
 
 
 if __name__ == '__main__':
