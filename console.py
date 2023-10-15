@@ -187,10 +187,8 @@ class HBNBCommand(cmd.Cmd):
     @staticmethod
     def sanitized_args(tokens):
         new_args = tokens[:2] + tokens[2].split(",")
-        print(new_args)
         dict_args = ", ".join(new_args[3:]) if "{" in new_args[3] else ""
         if re.match(r" *\{.*\}", dict_args):
-            print("here")
             try:
                 dict_args = eval(dict_args)
                 new_args = new_args[:3]

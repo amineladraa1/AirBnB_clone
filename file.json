@@ -1,1 +1,1 @@
-{"User.812182ab-2915-4b88-85ba-a08d84c9b2e5": {"id": "812182ab-2915-4b88-85ba-a08d84c9b2e5", "created_at": "2023-10-15T00:46:50.651046", "updated_at": "2023-10-15T00:46:50.651061", "name": "Yasmine", "lname": "Znatni", "email": "znatni.yasmine@gmail.com", "__class__": "User"}}
+{"User.812182ab-2915-4b88-85ba-a08d84c9b2e5": {"id": "812182ab-2915-4b88-85ba-a08d84c9b2e5", "created_at": "2023-10-15T00:46:50.651046", "updated_at": "2023-10-15T00:46:50.651061", "name": "Yasmine", "lname": "Znatni", "email": "znatni.yasmine@gmail.com", "gender": "female", "__class__": "User"}}
