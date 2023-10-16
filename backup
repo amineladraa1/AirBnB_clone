@@ -186,24 +186,13 @@ class HBNBCommand(cmd.Cmd):
                         args = args[:1] + args[len(args) - 1].split(",")
                     while len(args) < 3:
                         args.append("")
-                    tokens = tokens[:1] + args
-                    print(tokens)
+                    tokens = tokens[:2] + args
+                else:
+                    tokens = HBNBCommand.sanitized_args(tokens)
+                if tokens:
+                    tokens.pop(1)
                     HBNBCommand.do_update(self, " ".join(tokens))
                     return
-                else:
-                    tokens = tokens[:1] + tokens[2].split(",", 1)
-                    dict_args = tokens.pop()
-                    try:
-                        dict_args = eval(dict_args)
-                        tokens.extend(["", ""])
-                        for key, value in dict_args.items():
-                            tokens[2], tokens[3] = str(key), str(value)
-                            print(tokens)
-                            HBNBCommand.do_update(self, " ".join(tokens))
-                        return
-                    except (SyntaxError, ValueError):
-                        print(f"*** Unknown syntax: {line}")
-                        return
 
         print(f"*** Unknown syntax: {line}")
 
