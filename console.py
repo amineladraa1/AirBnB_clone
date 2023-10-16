@@ -120,22 +120,31 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """Updates the attributes of a given instance of a class"""
 
+        if not line:
+            print("** class name missing **")
+            return
+
         tokens = line.split()
 
-        err_msg = ["** class name missing **", "** instance id missing **",
-                   "** attribute name missing **", "** value missing **"]
-        for i in range(4):
+        if tokens[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
 
-            if len(tokens) == 1 and tokens[0] not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
+        if len(tokens) < 2:
+            print("** instance id missing **")
+            return
 
-            if len(tokens) == i:
-                print(err_msg[i])
-                return
+        if len(tokens) < 3:
+            print("** attribute name missing **")
+            return
+
+        if len(tokens) < 4:
+            print("** value missing **")
+            return
 
         for i in range(len(tokens)):
             tokens[i] = tokens[i].strip(" ,\"'")
+
         key_val = f"{tokens[0]}.{tokens[1]}"
 
         if key_val not in storage.all().keys():
@@ -189,6 +198,7 @@ class HBNBCommand(cmd.Cmd):
 
     @staticmethod
     def args(tokens):
+        """Splits up the line into <cls_name> <cmd> <arguments>"""
         cmd = tokens.pop()
         tokens.extend(cmd.split("("))
         tokens[2] = tokens[2][:-1]
@@ -201,6 +211,8 @@ class HBNBCommand(cmd.Cmd):
 
     @staticmethod
     def sanitized_args(tokens):
+        """Sanitizes arguments to be used to update a class
+        instance"""
         new_args = tokens[:2] + tokens[2].split(",", 1)
         dict_args = new_args.pop()
         try:
@@ -214,6 +226,7 @@ class HBNBCommand(cmd.Cmd):
             return new_args
         except (SyntaxError, ValueError):
             return None
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
