@@ -39,10 +39,13 @@ class HBNBCommand(cmd.Cmd):
         if not line:
             print("** class name missing **")
             return
+
         tokens = line.split()
+
         if tokens[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+
         new_instance = eval(line)()
         print(new_instance.id)
         storage.save()
@@ -117,19 +120,30 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """Updates the attributes of a given instance of a class"""
 
+        if not line:
+            print("** class name missing **")
+            return
+
         tokens = line.split()
 
-        err_msg = ["** class name missing **", "** instance id missing **",
-                   "** attribute name missing **", "** value missing **"]
-        for i in range(4):
+        if tokens[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
 
-            if len(tokens) == 1 and tokens[0] not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
+        if len(tokens) < 2:
+            print("** instance id missing **")
+            return
 
-            if len(tokens) == i:
-                print(err_msg[i])
-                return
+        if len(tokens) < 3:
+            print("** attribute name missing **")
+            return
+
+        if len(tokens) < 4:
+            print("** value missing **")
+            return
+
+        for i in range(len(tokens)):
+            tokens[i] = tokens[i].strip(" ,\"'")
 
         key_val = f"{tokens[0]}.{tokens[1]}"
 
@@ -137,12 +151,13 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
             return
 
-        setattr(storage.all()[key_val], tokens[2], tokens[3][1:-1])
+        new_val = tokens[3]
+        setattr(storage.all()[key_val], tokens[2], new_val)
         storage.save()
 
     def default(self, line):
         """Triggered when the user inputs an unrecognized command"""
-        tokens = line.split(".")
+        tokens = line.split(".", 1)
         if line.endswith("all()"):
             HBNBCommand.do_all(self, tokens[0])
             return
@@ -156,7 +171,72 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** class doesn't exist **")
             return
+        elif re.match(r'\w+\.\w+\(.*\)', line):
+            tokens = HBNBCommand.args(tokens)
+            if "show" in line:
+                HBNBCommand.do_show(self, f"{tokens[0]} {tokens[2]}")
+                return
+            if "destroy" in line:
+                HBNBCommand.do_destroy(self, f"{tokens[0]} {tokens[2]}")
+                return
+            if "update" in line:
+                args = tokens[len(tokens) - 1].split(",", 1)
+                if not HBNBCommand.is_dict(tokens[len(tokens) - 1]):
+                    if len(args) >= 2:
+                        args = args[:1] + args[len(args) - 1].split(",")
+                    while len(args) < 3:
+                        args.append("")
+                    tokens = tokens[:1] + args
+                    print(tokens)
+                    HBNBCommand.do_update(self, " ".join(tokens))
+                    return
+                else:
+                    tokens = tokens[:1] + tokens[2].split(",", 1)
+                    dict_args = tokens.pop()
+                    try:
+                        dict_args = eval(dict_args)
+                        tokens.extend(["", ""])
+                        for key, value in dict_args.items():
+                            tokens[2], tokens[3] = str(key), str(value)
+                            print(tokens)
+                            HBNBCommand.do_update(self, " ".join(tokens))
+                        return
+                    except (SyntaxError, ValueError):
+                        print(f"*** Unknown syntax: {line}")
+                        return
+
         print(f"*** Unknown syntax: {line}")
+
+    @staticmethod
+    def args(tokens):
+        """Splits up the line into <cls_name> <cmd> <arguments>"""
+        cmd = tokens.pop()
+        tokens.extend(cmd.split("("))
+        tokens[2] = tokens[2][:-1]
+        return tokens
+
+    @staticmethod
+    def is_dict(string):
+        """Checks if a string is in the form for a dictionary"""
+        return "{" in string or "}" in string
+
+    @staticmethod
+    def sanitized_args(tokens):
+        """Sanitizes arguments to be used to update a class
+        instance"""
+        new_args = tokens[:2] + tokens[2].split(",", 1)
+        dict_args = new_args.pop()
+        try:
+            eval(dict_args)
+            dict_args = dict_args.split(",")[0]
+            if "}" not in dict_args:
+                dict_args += "}"
+            dict_args = eval(dict_args)
+            for key, value in dict_args.items():
+                new_args.extend([str(key), str(value)])
+            return new_args
+        except (SyntaxError, ValueError):
+            return None
 
 
 if __name__ == '__main__':
